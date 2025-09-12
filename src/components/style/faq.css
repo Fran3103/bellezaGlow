@@ -1,0 +1,48 @@
+
+
+/* ===== Preguntas Frecuentes ===== */
+.faq-section { padding: 56px 0; }
+.faq__title{
+  margin: 0 0 16px;
+  font-family: "DM Serif Display", ui-serif, Georgia, serif;
+  font-size: 28px; letter-spacing: .6px; color:#1f1d1b; text-align:center;
+}
+@media (min-width:640px){ .faq__title{ font-size: 34px; } }
+
+.faq { background:#fff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; }
+
+.faq__item { border-bottom:1px solid #e5e7eb; }
+.faq__item:last-child { border-bottom:none; }
+
+.faq__sum {
+  list-style:none;
+  display:flex; align-items:center; gap:10px;
+  padding:14px 16px; cursor:pointer;
+  font-weight:700; color:#111827;
+}
+.faq__item summary::-webkit-details-marker { display:none; }
+
+.faq__check{
+  flex:0 0 20px; height:20px; border-radius:6px; background:#34d399; /* verde */
+  box-shadow:0 0 0 1px rgba(0,0,0,.06) inset;
+  /* ícono check usando masks */
+  -webkit-mask:
+    conic-gradient(from 45deg,#0000 0 24%,#000 0 36%,#0000 0 64%,#000 0 76%,#0000 0),
+    radial-gradient(6px at 36% 58%,#000 98%,#0000);
+  mask:
+    conic-gradient(from 45deg,#0000 0 24%,#000 0 36%,#0000 0 64%,#000 0 76%,#0000 0),
+    radial-gradient(6px at 36% 58%,#000 98%,#0000);
+}
+
+.faq__q { flex:1; font-size:16px; }
+.faq__chev{
+  width:18px; height:18px; border-right:2px solid #6b7280; border-bottom:2px solid #6b7280;
+  transform: rotate(-45deg); transition: transform .2s ease;
+}
+.faq__item[open] .faq__chev { transform: rotate(135deg); }
+
+.faq__a {
+  padding: 0 16px 14px 46px;
+  color:#374151; line-height:1.55; font-size:15px;
+}
+.faq__a b { color:#111827; }

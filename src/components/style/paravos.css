@@ -1,0 +1,57 @@
+/* ===== Sección "Este libro es para vos si…" ===== */
+.for-you-section {
+  position: relative;
+  padding: 56px 0;
+}
+.for-you {
+  position: relative;
+  background: var(--bgSection);
+  border: 1px solid var(--bordeSection);
+  border-radius: 22px;
+  padding: 28px 22px 80px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+.for-you__title {
+  margin: 0 0 14px;
+  font-family: "DM Serif Display", ui-serif, Georgia, serif;
+  font-size: 28px;
+  letter-spacing: 0.6px;
+  color: #3a2e28;
+}
+@media (min-width: 640px) {
+  .for-you__title {
+    font-size: 34px;
+  }
+}
+
+.for-you__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.for-you__list li {
+  position: relative;
+  margin: 12px 0;
+  font-size: 18px;
+  line-height: 1.45;
+  color: #3d3029;
+  z-index: 10;
+}
+
+/* Decoración SVG */
+.sparkles {
+  position: absolute;
+  right: -10px;
+  top: -6px;
+  width: 160px;
+  height: 160px;
+}
+.jar {
+  position: absolute;
+  left: -8px;
+  bottom: -6px;
+  width: 200px;
+  height: 120px;
+  opacity: 0.8;
+}

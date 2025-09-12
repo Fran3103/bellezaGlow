@@ -1,0 +1,125 @@
+/* ---------- Reset suave ---------- */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+    Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ---------- Paleta ---------- */
+:root {
+  --bg: #f8f5f2;
+  --text: #1f1d1b;
+  --bgSection:#f6efe9; /*color de de fondo de secciones*/
+  --bordeSection:#eadfd7; /*color de de borde de secciones*/
+  --primary: #6b5044; /* botón principal */
+  --accent: #9a956b; /* banner/temporizador */
+  --muted: #6b7280; /* textos secundarios */
+  --card: #ffffff;
+  --ring: rgba(0, 0, 0, 0.06);
+  --buy: #16a34a; /* verde principal */
+  --buy-strong: #15803d; /* hover/focus */
+  --buy-halo: rgba(34, 197, 94, 0.18); /* halo del pulso */
+}
+
+/* ---------- Utilitarios ---------- */
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+  position: relative;
+}
+
+.shadow {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.ring {
+  box-shadow: 0 0 0 1px var(--ring) inset;
+}
+.round-xl {
+  border-radius: 16px;
+}
+.round-2xl {
+  border-radius: 20px;
+}
+.mt-10 {
+  margin-top: 40px;
+}
+.mt-6 {
+  margin-top: 24px;
+}
+.mt-3 {
+  margin-top: 12px;
+}
+.mb-1 {
+  margin-bottom: 4px;
+}
+.mb-2 {
+  margin-bottom: 8px;
+}
+.mb-3 {
+  margin-bottom: 12px;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+/* ---------- Barra superior ---------- */
+.top-bar {
+  background: var(--accent);
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* Glow decorativo */
+.glow,
+.glow-2 {
+  position: fixed;
+  border-radius: 999px;
+  filter: blur(48px);
+  opacity: 0.75;
+  pointer-events: none;
+  background: radial-gradient(closest-side, #eed1c8, transparent 70%);
+}
+.glow {
+  width: 320px;
+  height: 320px;
+  right: -80px;
+  top: 90px;
+}
+.glow-2 {
+  width: 300px;
+  height: 300px;
+  left: -80px;
+  bottom: -80px;
+}

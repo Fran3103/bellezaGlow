@@ -1,0 +1,44 @@
+/* ===== Bonos de regalo ===== */
+.bonuses-section { padding: 56px 0; }
+.bonuses__title{
+  margin: 0 0 18px;
+  font-family: "DM Serif Display", ui-serif, Georgia, serif;
+  font-size: 28px; letter-spacing:.6px; color:#1f1d1b; text-align:center;
+}
+@media (min-width:640px){ .bonuses__title{ font-size:34px; } }
+
+.bonuses-grid{
+  display:grid; gap:16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.bonus-card{
+  background:#fff; border:1px solid #eadfd7; border-radius:16px;
+  padding:12px; box-shadow:0 8px 22px rgba(0,0,0,.06);
+}
+
+.bonus-thumb-wrap{ position:relative; }
+.bonus-thumb{
+  width:100%; aspect-ratio: 4 / 3; object-fit:cover;
+  border-radius:12px; box-shadow:0 10px 28px rgba(0,0,0,.08);
+  background:#f7f7f7;
+}
+.bonus-pill{
+  position:absolute; left:10px; top:10px;
+  background:#6B5044; color:#fff; font-weight:800; font-size:12px;
+  padding:6px 10px; border-radius:999px; box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+
+.bonus-title{
+  margin:10px 4px 8px; font-size:16px; line-height:1.35; color:#1f1d1b;
+}
+
+.bonus-price{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin: 6px 4px 4px; }
+.bonus-price-label{ font-size:12px; color:#6B7280; }
+.bonus-price-old{
+  font-weight:800; color:#b45309; text-decoration: line-through;
+}
+.bonus-price-free{
+  font-size:13px; font-weight:800; color:#065f46; background:#dcfce7;
+  padding:4px 8px; border-radius:999px;
+}

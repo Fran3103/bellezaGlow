@@ -1,0 +1,36 @@
+
+/* ---------- Testimonios (carrusel) ---------- */
+.reviews { background: #F1EFEB; padding: 20px; border-radius: 18px; }
+.track {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 100%;
+  overflow: hidden; scroll-behavior: smooth;
+}
+@media (min-width: 900px){ .track { grid-auto-columns: 50%; } }
+@media (min-width: 1280px){ .track { grid-auto-columns: 33.3333%; } }
+
+.card {
+  background: var(--card); color: #1f2937;
+  border: 1px solid #e5e7eb; border-radius: 14px;
+  padding: 16px 18px; margin: 6px; box-shadow: 0 4px 16px rgba(0,0,0,.05);
+  min-height: 210px;
+}
+.card-head { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.avatar {
+  width:40px; height:40px; border-radius:50%; background:#eef2f7; color:#334155; font-weight:800;
+  display:grid; place-items:center;
+}
+.name { font-weight: 800; display:flex; align-items:center; gap:6px; }
+.meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.stars { margin: 4px 0 6px; color: #111827; font-size: 14px; letter-spacing: .6px; }
+.card h4 { margin: 4px 0 6px; font-weight: 800; font-size: 18px; color:#0f172a; }
+.card p { margin: 0; line-height: 1.45; color: #334155; }
+
+.controls { margin-top: 10px; display:flex; align-items:center; justify-content:center; gap: 10px; }
+.btn-ghost{
+  width: 36px; height: 36px; display:grid; place-items:center;
+  background:#fff; color:#111827; border:1px solid #e5e7eb; border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.btn-ghost:hover { background: #f3f4f6; }
+
+

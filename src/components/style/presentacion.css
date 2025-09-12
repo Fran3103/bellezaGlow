@@ -1,0 +1,22 @@
+.presentacion {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--bg);
+    
+}
+
+
+.presentacion h1 {
+    font-family: "DM Serif Display", ui-serif, Georgia, serif;
+    font-size: 36px;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+
+.presentacion img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 12px;
+    
+}

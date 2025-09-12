@@ -1,0 +1,28 @@
+{
+  "faqs": [
+    {
+      "q": "¿Me llega ahora o mañana?",
+      "a": "Ahora. Apenas comprás, te enviamos un email con el enlace de descarga (y una copia de seguridad en la página de “gracias”). ¿No aparece? Revisá Spam/Promociones o escribinos y re-enviamos en minutos."
+    },
+    {
+      "q": "¿En qué dispositivos funciona?",
+      "a": "En todos: PDF (móvil/PC/tablet) y ePub (Kindle/ereaders). Podés usarlo offline y en hasta 3 dispositivos."
+    },
+    {
+      "q": "¿Necesito equipo raro para empezar?",
+      "a": "No. Arrancás con utensilios de cocina (balanza digital simple, baño María, frascos). Te damos una lista mínima y dónde conseguirlos."
+    },
+    {
+      "q": "¿Puedo vender lo que haga con tus recetas?",
+      "a": "Sí. Lo que elaborás es tuyo. Incluimos varias recetas y podés darles tu toque único. Sumamos rotulado orientativo (no es asesoría legal)."
+    },
+    {
+      "q": "¿Cómo pago y recibo el e-book?",
+      "a": "Pagás con Mercado Pago / tarjeta y te llega por email al instante con tu enlace de descarga. Guardalo: es tu copia permanente."
+    },
+    {
+      "q": "¿Y si no me convence?",
+      "a": "Tenés Garantía 7 días. Si no te aporta valor, escribinos y te devolvemos el dinero sin vueltas."
+    }
+  ]
+}

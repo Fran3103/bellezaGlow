@@ -1,0 +1,34 @@
+{
+  "bonuses": [
+    {
+      "title": "Introduccion a Aromaterapia",
+      "image": "/image/aromaterapia.webp",
+      "value": 14990
+    },
+    {
+      "title": "Bombas de baño",
+      "image": "/image/bombasdebaño.webp",
+      "value": 12990
+    },
+    {
+      "title": "Cremas Corporales",
+      "image": "/image/cremascorporales.webp",
+      "value": 11990
+    },
+    {
+      "title": "Crea Jabones Artesanales",
+      "image": "/image/jabonartesanal.webp",
+      "value": 9990
+    },
+    {
+      "title": "Crea tu shimmer casero",
+      "image": "/image/shimmer.webp",
+      "value": 8990
+    },
+    {
+      "title": "Crea tus Velas Artesanales",
+      "image": "/image/velasartesanales.webp",
+      "value": 8990
+    }
+  ]
+}

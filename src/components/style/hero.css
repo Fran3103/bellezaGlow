@@ -1,0 +1,368 @@
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  padding: 56px 0;
+}
+
+.hero-grid {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 40px;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.center {
+  display: flex;
+  place-items: center;
+  background-color: var(--bg);
+  opacity: 2;
+}
+
+.hero h1 {
+  font-family: "DM Serif Display", ui-serif, Georgia, serif;
+  font-size: 44px;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hero p.lead {
+  margin: 16px 0 0;
+  font-size: 18px;
+  opacity: 0.95;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  gap: 2px;
+  max-width: 600px;
+}
+
+.hero-text .star {
+  font-size: 10px;
+}
+
+.hero-text .price {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-text .price :first-child {
+  text-decoration: line-through;
+  font-size: 0.8rem;
+}
+
+.hero-text .price :last-child {
+  font-size: 1.2rem;
+}
+
+.hero-text .cupos {
+  font-size: 10px;
+  background-color: black;
+  padding: 7px 15px;
+  border-radius: 50px;
+  color: white;
+  margin-top: -3px;
+  animation: 1s infinite, ec-pulse 1.8s infinite;
+}
+
+.hero-text .container-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+
+/*  Boton de compra  */
+
+.hero-text .btn-compra{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 20px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 300px;
+  margin: 0;
+
+  background: var(--buy) !important;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  isolation: isolate;           /* para superponer el brillo */
+  overflow: hidden;             /* recorta el brillo */
+  transition: transform .2s ease, box-shadow .2s ease;
+
+  /* pulso suave infinito */
+  animation: btnPulse 3.2s ease-in-out infinite;
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+}
+/* Flecha con micro “nudge” infinito */
+.hero-text .btn-compra .arrow{
+  display: inline-block;
+  will-change: transform;
+  animation: arrowNudge 1.8s ease-in-out infinite;
+}
+
+/* Hover/focus: un poco más presente */
+.hero-text .btn-compra:hover,
+.hero-text .btn-compra:focus-visible{
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 12px 26px rgba(0,0,0,.16);
+  outline: none;
+  background: var(--buy-strong) !important;
+}
+.hero-text .btn-compra::after{
+  content: "";
+  position: absolute;
+  top: -120%;
+  left: -160%;
+  width: 140%;
+  height: 340%;
+  transform: rotate(18deg);
+  background: linear-gradient(
+    75deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.35) 12%,
+    rgba(255,255,255,0) 24%
+  );
+  animation: btnShine 1.4s linear infinite;
+  pointer-events: none;
+  mix-blend-mode: screen; /* opcional: efecto más fino en fondos oscuros */
+}
+
+/* Accesibilidad: si el usuario prefiere menos movimiento, quitamos animaciones */
+@media (prefers-reduced-motion: reduce){
+  .hero-text .btn-compra,
+  .hero-text .btn-compra::after,
+  .hero-text .btn-compra .arrow{
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ===== Keyframes ===== */
+@keyframes btnPulse{
+  0%, 100%{
+    transform: translateY(0) scale(1);
+    box-shadow:  0 8px 22px rgba(0,0,0,.12), 0 0 0 0 var(--buy-halo);
+  }
+  50%{
+    transform: translateY(-0.5px) scale(1.01);
+    box-shadow: 0 12px 28px rgba(0,0,0,.16), 0 0 0 10px var(--buy-halo); /* halo */
+  }
+}
+
+@keyframes btnShine{
+  0%   { transform: translate3d(0,0,0) rotate(18deg); }
+  100% { transform: translate3d(60%,0,0) rotate(18deg); }
+}
+
+@keyframes arrowNudge{
+  0%, 100% { transform: translateX(0); }
+  40%      { transform: translateX(3px); }
+  60%      { transform: translateX(1px); }
+}
+
+.hero-text .garantia {
+  margin-top: 14px;
+}
+
+/* ---------- Imagen mockup ---------- */
+.mockup {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 24px;
+}
+.mockup-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (min-width: 640px) {
+  .hero h1 {
+    font-size: 56px;
+  }
+}
+
+@media (min-width: 992px) {
+  .hero-grid {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .hero-text h2 {
+    font-size: 2rem;
+    margin: 10px 0;
+  }
+  .hero-text .star {
+    font-size: 15px;
+  }
+
+  .hero-text .price {
+    gap: 15px;
+    align-items: center;
+    width: 100%;
+
+  }
+
+  .hero-text .price :first-child {
+    text-decoration: line-through;
+    font-size: 1.1rem;
+  }
+
+  .hero-text .price :last-child {
+    font-size: 1.5rem;
+  }
+
+  .hero-text .cupos {
+    font-size: 14px;
+    padding: 7px 15px;
+  }
+
+  .hero-text .btn-compra {
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: 20px;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 300px;
+    margin: 0;
+  }
+}
+
+/* ===== Garantía 7 días ===== */
+
+.guarantee {
+  position: relative;
+  background: #fff;
+  border: 1px solid #eadfd7;
+  border-radius: 14px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.guarantee summary::-webkit-details-marker {
+  display: none;
+}
+.guarantee__sum {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+.guarantee__pill {
+  
+  color: #000000;
+  font-weight: 800;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  width: 100%;
+}
+
+.guarantee__chev {
+  width: 18px;
+  height: 18px;
+  border-right: 2px solid #6b7280;
+  border-bottom: 2px solid #6b7280;
+  transform: rotate(-45deg);
+  transition: transform 0.2s;
+
+}
+.guarantee[open] .guarantee__chev {
+  transform: rotate(135deg);
+}
+
+/* --- Overlay: el body NO ocupa flujo --- */
+
+.guarantee--overlay .guarantee__body {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: calc(100% + 8px); /* debajo del summary */
+  background: #fff;
+  border: 1px solid #eadfd7;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.14);
+  max-height: min(60vh, 480px);
+  overflow: auto;
+  padding: 14px;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.18s ease,
+    visibility 0s linear 0.18s;
+  z-index: 40;
+}
+.guarantee--overlay[open] .guarantee__body {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
+}
+
+/* Ítems internos */
+.guarantee__list {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.guarantee__list li {
+  position: relative;
+  padding-left: 28px;
+  margin: 8px 0;
+  color: #374151;
+  line-height: 1.5;
+}
+.guarantee__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: #34d399;
+  -webkit-mask: conic-gradient(
+      from 45deg,
+      #0000 0 24%,
+      #000 0 36%,
+      #0000 0 64%,
+      #000 0 76%,
+      #0000 0
+    ),
+    radial-gradient(6px at 36% 58%, #000 98%, #0000);
+  mask: conic-gradient(
+      from 45deg,
+      #0000 0 24%,
+      #000 0 36%,
+      #0000 0 64%,
+      #000 0 76%,
+      #0000 0
+    ),
+    radial-gradient(6px at 36% 58%, #000 98%, #0000);
+}

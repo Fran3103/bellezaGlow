@@ -1,0 +1,36 @@
+
+/* ===== Sección "Con este libro aprenderás a" ===== */
+.learn-section { position: relative; padding: 56px 0; }
+.learn {
+  position: relative;
+  background: var(--bgSection);
+  border: 1px solid var(--bordeSection);
+  border-radius: 22px;
+  padding: 28px 22px 90px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+.learn__title{
+  margin: 0 0 14px;
+  font-family: "DM Serif Display", ui-serif, Georgia, serif;
+  font-size: 28px; letter-spacing: .6px; color:#3a2e28;
+}
+@media (min-width:640px){ .learn__title{ font-size: 34px; } }
+
+.learn__list{ list-style:none; padding:0; margin:0; }
+.learn__list li{
+  position: relative;
+  padding-left: 6px;
+  margin: 14px 0;
+  font-size: 18px; line-height: 1.45; color:#3d3029;
+}
+.learn__list li b{ color:#2a211c; }
+
+.learn-heart{
+  position:absolute; right:-12px; top:-10px; width:190px; height:150px;
+}
+.learn-hand{
+  position:absolute; left:-8px; bottom:-10px; width:240px; height:140px; opacity:.85;
+}
+
+
