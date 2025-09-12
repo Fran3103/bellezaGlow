@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Countdown from "./components/Countdown.jsx";
 import Reviews from "./components/Reviews.jsx";
-import { getFirstUtm, saveFirstUtm } from "./lib/utm.js";
+import { saveFirstUtm } from "./lib/utm.js";
 import ParaVos from "./components/ParaVos.jsx";
 import Aprenderas from "./components/Aprenderas.jsx";
 import AsiSeVe from "./components/AsiSeVe.jsx";
@@ -12,27 +12,45 @@ import Bonuses from "./components/Bonuses.jsx";
 
 export default function App() {
   useEffect(() => {
-    saveFirstUtm();
+    // guarda UTM solo una vez
+    try {
+      saveFirstUtm();
+    } catch (e) {
+      /* ignorar */
+      console.error("error al guardar",e)
+    }
   }, []);
 
   async function comprar() {
-    const utm = getFirstUtm();
-    const r = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ utm }),
-    });
-    const { url } = await r.json();
-    // (Opcional) tracking en cliente
-    window.gtag?.("event", "begin_checkout", {
-      items: [{ item_id: "ebook-bg" }],
-    });
-    window.fbq?.("track", "InitiateCheckout", {
-      content_ids: ["ebook-bg"],
-      value: 99.0,
-      currency: "ARS",
-    });
-    location.href = url;
+    try {
+      let utm = {};
+      try {
+        utm = JSON.parse(localStorage.getItem("first_utm") || "{}");
+      } catch {console.log("error")}
+
+      const r = await fetch("/api/mp-preference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ utm }),
+      });
+
+      const txt = await r.text();
+      console.log("mp-preference ->", r.status, txt);
+      let data = {};
+      try {
+        data = JSON.parse(txt);
+      } catch (e) {
+        throw new Error("Respuesta inválida", e);
+      }
+
+      if (!r.ok || !data.init_point) {
+        throw new Error(data.error || "No pudimos iniciar el pago");
+      }
+
+      window.location.href = data.init_point;
+    } catch (e) {
+      alert(e.message);
+    }
   }
 
   return (
@@ -40,8 +58,6 @@ export default function App() {
       <section className="top-bar">
         <h2>50% OFF + Bono de regalo por tiempo limitado</h2>
       </section>
-      {/*<div className="glow" aria-hidden="true"></div>
-      <div className="glow-2" aria-hidden="true"></div>*/}
 
       <section>
         <Presentacion />
@@ -55,6 +71,7 @@ export default function App() {
       <section>
         <AsiSeVe />
       </section>
+
       <section className="hero">
         <Hero onCta={comprar} />
       </section>
@@ -74,4 +91,3 @@ export default function App() {
     </main>
   );
 }
-// Nota: este componente es solo ilustrativo, no bloquea nada al expirar.
