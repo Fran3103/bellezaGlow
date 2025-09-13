@@ -2,12 +2,17 @@
 /* global Buffer */
 import crypto from "node:crypto";
 
+const ALLOWED = [
+  "https://bellezaglow.com",
+  "http://localhost:5173", "http://localhost:3000", "http://localhost:3002"
+];
+
 function setCORS(req, res) {
   const origin = req.headers.origin || "";
+  if (ALLOWED.includes(origin)) res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Origin", origin || "*");
 }
 
 async function readJson(req) {
@@ -23,9 +28,8 @@ export default async function handler(req, res) {
   if (req.method !== "POST")   { res.statusCode = 405; return res.end("Method Not Allowed"); }
 
   // Prefiere PUBLIC_SITE_URL si existe
-  const proto = req.headers["x-forwarded-proto"] || "http";
-  const host  = req.headers["x-forwarded-host"] || req.headers.host || "";
-  const BASE  = (process.env.PUBLIC_SITE_URL?.trim() || `${proto}://${host}`).replace(/\/$/, "");
+
+  const BASE  = (process.env.PUBLIC_SITE_URL?.trim() || 'https://bellezaglow.com').replace(/\/$/, "");
 
   try {
     const { utm = {} } = await readJson(req);
@@ -43,9 +47,9 @@ export default async function handler(req, res) {
     const pref = {
       items: [{ title: "Belleza Glow – eBook", quantity: 1, currency_id: "ARS", unit_price: PRICE }],
       back_urls: {
-        success: `${BASE}/thanks`,
-        pending: `${BASE}/pending`,
-        failure: `${BASE}/`
+        success: `${BASE}/#thanks`,
+        pending: `${BASE}/#pending`,
+        failure: `${BASE}/#cancelled`
       },
       auto_return: "approved",           // está bien activarlo siempre
       metadata: { ...utm, product_id: "ebook-bg" },

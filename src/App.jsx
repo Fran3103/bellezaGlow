@@ -33,12 +33,12 @@ export default function App() {
       body: JSON.stringify({ utm }),
     });
 
-    const { init_point, sandbox_init_point, error } = await r.json();
-    console.log("MP pref ->", { init_point, sandbox_init_point, error });
+    const { init_point,  error } = await r.json();
+   
 
     if (error || !init_point) {
-      alert(error || "No pudimos iniciar el pago.");
-      return;
+        alert(error || "No pudimos iniciar el pago.");
+        return;
     }
 
     // redirigir al checkout productivo:
