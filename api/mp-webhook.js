@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-/** Lee JSON del cuerpo (Vercel/Node compatible) */
+/** ---------- helpers ---------- */
 async function readJson(req) {
   try {
     if (req.body && typeof req.body === 'object') return req.body;
@@ -10,6 +10,7 @@ async function readJson(req) {
   } catch { return {}; }
 }
 
+/** ---------- env ---------- */
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL     = process.env.FROM_EMAIL || 'Belleza Glow <no-reply@bellezaglow.com>';
 const SUPPORT_EMAIL  = process.env.SUPPORT_EMAIL || '';
@@ -18,7 +19,10 @@ const DOWNLOADS      = (process.env.DOWNLOAD_URLS || '')
   .map(s => s.trim())
   .filter(Boolean);
 
-/** Envío de email con Resend (idempotente) */
+const SHEET_WEBHOOK_URL = process.env.SHEET_WEBHOOK_URL; // URL del Web App de Apps Script
+const SHEET_SECRET      = process.env.SHEET_SECRET;       // Debe coincidir con tu doPost en Apps Script
+
+/** ---------- email (Resend) ---------- */
 async function sendDownloadEmail({ to, name, payId }) {
   if (!RESEND_API_KEY) throw new Error('Falta RESEND_API_KEY');
   if (!to) throw new Error('Falta email del comprador');
@@ -59,6 +63,21 @@ async function sendDownloadEmail({ to, name, payId }) {
   }
 }
 
+/** ---------- Google Sheets (Apps Script) ---------- */
+async function postToSheet(payload) {
+  if (!SHEET_WEBHOOK_URL) return; // si no configuraste, no hacemos nada
+  try {
+    await fetch(`${SHEET_WEBHOOK_URL}?key=${encodeURIComponent(SHEET_SECRET || '')}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    console.error('sheet post error:', e);
+  }
+}
+
+/** ---------- webhook ---------- */
 export default async function handler(req, res) {
   // MP reintenta si no respondés 200. Si algo falla, logueamos pero devolvemos 200.
   if (req.method !== 'POST') { res.statusCode = 200; return res.end('ok'); }
@@ -89,11 +108,37 @@ export default async function handler(req, res) {
     console.log('MP payment status:', pay.status, 'id:', pay.id, 'ext_ref:', pay.external_reference);
 
     if (pay.status === 'approved') {
-      const email = pay.payer?.email || pay.additional_info?.payer?.email;
+      // datos de usuario
+      const email = pay.payer?.email || pay.additional_info?.payer?.email || '';
       const name  = [pay.payer?.first_name, pay.payer?.last_name].filter(Boolean).join(' ');
+
+      // payload para la planilla (coincide con tu doPost de Apps Script)
+      const payload = {
+        payment_id: pay.id,
+        status: pay.status,
+        email,
+        name,
+        amount: pay.transaction_amount,
+        preference_id: pay.metadata?.preference_id || '', // si lo guardás en metadata al crear la preferencia
+        external_reference: pay.external_reference || '',
+        utm: {
+          utm_source:   pay.metadata?.utm_source   || '',
+          utm_medium:   pay.metadata?.utm_medium   || '',
+          utm_campaign: pay.metadata?.utm_campaign || '',
+          utm_id:       pay.metadata?.utm_id       || '',
+          utm_term:     pay.metadata?.utm_term     || '',
+          utm_content:  pay.metadata?.utm_content  || '',
+        },
+        date_created: pay.date_created
+      };
+
+      // 1) registra la venta en Sheets
+      await postToSheet(payload);
+
+      // 2) envía el email de descarga (si tenemos correo)
       if (email) {
         try {
-          await sendDownloadEmail({ to: email, name, payId });
+          await sendDownloadEmail({ to: email, name, payId: pay.id });
           console.log('Email enviado a:', email);
         } catch (e) {
           console.error('Error enviando email:', e);
