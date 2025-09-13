@@ -25,7 +25,7 @@ async function sendDownloadEmail({ to, name, payId }) {
   if (!DOWNLOADS.length) throw new Error('Faltan DOWNLOAD_URLS');
 
   const links = DOWNLOADS
-    .map((u, i) => `<li><a href="${u}" target="_blank" rel="noopener">Descarga ${i + 1}</a></li>`)
+    .map((u, i) => `<li><a href="${u}" target="_blank" rel="noopener">Descargar Libro ${i + 1}</a></li>`)
     .join('');
 
   const html = `
