@@ -12,12 +12,23 @@ async function readJson(req) {
 
 /** ---------- env ---------- */
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL     = process.env.FROM_EMAIL || 'Belleza Glow <no-reply@bellezaglow.com>';
+const FROM_EMAIL     = process.env.FROM_EMAIL || 'Belleza Glow <hola@bellezaglow.com>';
 const SUPPORT_EMAIL  = process.env.SUPPORT_EMAIL || '';
-const DOWNLOADS      = (process.env.DOWNLOAD_URLS || '')
+const SITE = (process.env.PUBLIC_SITE_URL || 'https://bellezaglow.com').replace(/\/$/, '');
+
+// DOWNLOAD_URLS como "clave|label,clave|label,..."
+const DOWNLOADS = (process.env.DOWNLOAD_URLS || '')
   .split(',')
   .map(s => s.trim())
-  .filter(Boolean);
+  .filter(Boolean)
+  .map((entry, i) => {
+    const [key, label] = entry.split('|');
+    return {
+      // usa el rewrite /d/:u (o /api/go?u=:u si no añadiste el rewrite)
+      href: `${SITE}/d/${encodeURIComponent(key)}`,
+      label: label || `Descargar archivo ${i + 1}`
+    };
+  });
 
 const SHEET_WEBHOOK_URL = process.env.SHEET_WEBHOOK_URL; // URL del Web App de Apps Script
 const SHEET_SECRET      = process.env.SHEET_SECRET;       // Debe coincidir con tu doPost en Apps Script
@@ -29,8 +40,16 @@ async function sendDownloadEmail({ to, name, payId }) {
   if (!DOWNLOADS.length) throw new Error('Faltan DOWNLOAD_URLS');
 
   const links = DOWNLOADS
-    .map((u, i) => `<li><a href="${u}" target="_blank" rel="noopener">Descargar Libro ${i + 1}</a></li>`)
-    .join('');
+  .map(d => `
+    <p>
+      <a href="${d.href}" target="_blank" rel="noopener"
+         style="display:inline-block;background:#16a34a;color:#fff;
+                text-decoration:none;padding:12px 18px;border-radius:10px">
+        ${d.label} ⬇️
+      </a>
+    </p>
+  `)
+  .join('');
 
   const html = `
   <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6">
