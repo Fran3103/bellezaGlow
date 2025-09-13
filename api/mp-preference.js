@@ -51,7 +51,8 @@ export default async function handler(req, res) {
         pending: `${BASE}/#pending`,
         failure: `${BASE}/#cancelled`
       },
-      auto_return: "approved",           // está bien activarlo siempre
+      auto_return: "approved", 
+      notification_url: `${BASE}/api/mp-webhook`,            
       metadata: { ...utm, product_id: "ebook-bg" },
       external_reference: externalRef
     };
