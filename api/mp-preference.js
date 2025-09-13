@@ -1,79 +1,87 @@
 /* eslint-env node */
 /* global Buffer */
+import crypto from "node:crypto";
 
 function setCORS(req, res) {
-  const origin = req.headers.origin || '';
-  res.setHeader('Vary', 'Origin');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  const origin = req.headers.origin || "";
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Origin", origin || "*");
 }
 
 async function readJson(req) {
   const chunks = [];
   for await (const c of req) chunks.push(c);
-  try { return JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}'); }
+  try { return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}"); }
   catch { return {}; }
 }
 
 export default async function handler(req, res) {
   setCORS(req, res);
-  if (req.method === 'OPTIONS') { res.statusCode = 204; return res.end(); }
-  if (req.method !== 'POST') { res.statusCode = 405; return res.end('Method Not Allowed'); }
+  if (req.method === "OPTIONS") { res.statusCode = 204; return res.end(); }
+  if (req.method !== "POST")   { res.statusCode = 405; return res.end("Method Not Allowed"); }
 
-  // Base según entorno
-  const proto = req.headers['x-forwarded-proto'] || 'http';
-  const host  = req.headers['x-forwarded-host'] || req.headers.host || '';
-  const isLocal = /localhost|127\.0\.0\.1/.test(host);
-
-  // Dominio público (https) para redirecciones
-  const PUBLIC_BASE = (process.env.PUBLIC_SITE_URL || 'https://belleza-glow.vercel.app').replace(/\/$/, '');
-  const RUNTIME_BASE = `${proto}://${host}`;
-  const BASE = isLocal ? PUBLIC_BASE : RUNTIME_BASE;
+  // Prefiere PUBLIC_SITE_URL si existe
+  const proto = req.headers["x-forwarded-proto"] || "http";
+  const host  = req.headers["x-forwarded-host"] || req.headers.host || "";
+  const BASE  = (process.env.PUBLIC_SITE_URL?.trim() || `${proto}://${host}`).replace(/\/$/, "");
 
   try {
     const { utm = {} } = await readJson(req);
-
     const PRICE = Number(process.env.PRICE_AR || 0);
     const TOKEN = process.env.MP_ACCESS_TOKEN;
 
     if (!TOKEN || !PRICE) {
       res.statusCode = 400;
-      res.setHeader('Content-Type','application/json');
-      return res.end(JSON.stringify({ error: 'Faltan MP_ACCESS_TOKEN o PRICE_AR' }));
+      res.setHeader("Content-Type","application/json");
+      return res.end(JSON.stringify({ error: "Faltan MP_ACCESS_TOKEN o PRICE_AR" }));
     }
 
+    const externalRef = crypto.randomUUID();
+
     const pref = {
-      items: [{ title: 'Belleza Glow – eBook', quantity: 1, currency_id: 'ARS', unit_price: PRICE }],
+      items: [{ title: "Belleza Glow – eBook", quantity: 1, currency_id: "ARS", unit_price: PRICE }],
       back_urls: {
         success: `${BASE}/thanks`,
         pending: `${BASE}/pending`,
         failure: `${BASE}/`
       },
-      // En local NO mandamos auto_return para que MP no lo invalide
-      ...( !isLocal ? { auto_return: 'approved' } : {} ),
-      metadata: { ...utm, product_id: 'ebook-bg' }
+      auto_return: "approved",           // está bien activarlo siempre
+      metadata: { ...utm, product_id: "ebook-bg" },
+      external_reference: externalRef
     };
 
-    const resp = await fetch('https://api.mercadopago.com/checkout/preferences', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` },
+    const resp = await fetch("https://api.mercadopago.com/checkout/preferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${TOKEN}` },
       body: JSON.stringify(pref),
     });
 
     const data = await resp.json();
+
+    // DEBUG útil (miralo en logs de Vercel)
+    console.log("MP pref ->", {
+      tokenType: TOKEN.startsWith("APP_USR-") ? "prod" : "test",
+      id: data?.id,
+       collector_id: data?.collector_id,
+      init_point: data?.init_point,
+      sandbox_init_point: data?.sandbox_init_point
+    });
+
     if (!resp.ok) {
       res.statusCode = 400;
-      res.setHeader('Content-Type','application/json');
-      return res.end(JSON.stringify({ error: data?.message || 'Error creando preferencia', raw: data }));
+      res.setHeader("Content-Type","application/json");
+      return res.end(JSON.stringify({ error: data?.message || "Error creando preferencia", raw: data }));
     }
 
     res.statusCode = 200;
-    res.setHeader('Content-Type','application/json');
-    return res.end(JSON.stringify({ init_point: data.init_point || data.sandbox_init_point }));
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Cache-Control", "no-store");
+    return res.end(JSON.stringify({ init_point: data.init_point }));
   } catch (e) {
     res.statusCode = 500;
-    res.setHeader('Content-Type','application/json');
-    return res.end(JSON.stringify({ error: 'server_error', message: String(e?.message || e) }));
+    res.setHeader("Content-Type","application/json");
+    return res.end(JSON.stringify({ error: "server_error", message: String(e?.message || e) }));
   }
 }

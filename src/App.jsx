@@ -17,42 +17,33 @@ export default function App() {
       saveFirstUtm();
     } catch (e) {
       /* ignorar */
-      console.error("error al guardar",e)
+      console.error("error al guardar", e);
     }
   }, []);
 
   async function comprar() {
+    let utm = {};
     try {
-      let utm = {};
-      try {
-        utm = JSON.parse(localStorage.getItem("first_utm") || "{}");
-      } catch {console.log("error")}
+      utm = JSON.parse(localStorage.getItem("first_utm") || "{}");
+    } catch {}
 
-      const r = await fetch("/api/mp-preference", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ utm }),
-      });
+    const r = await fetch("/api/mp-preference", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ utm }),
+    });
 
-      const txt = await r.text();
-      console.log("mp-preference ->", r.status, txt);
-      let data = {};
-      try {
-        data = JSON.parse(txt);
-      } catch (e) {
-        throw new Error("Respuesta inválida", e);
-      }
+    const { init_point, sandbox_init_point, error } = await r.json();
+    console.log("MP pref ->", { init_point, sandbox_init_point, error });
 
-      if (!r.ok || !data.init_point) {
-        throw new Error(data.error || "No pudimos iniciar el pago");
-      }
-
-      window.location.href = data.init_point;
-    } catch (e) {
-      alert(e.message);
+    if (error || !init_point) {
+      alert(error || "No pudimos iniciar el pago.");
+      return;
     }
-  }
 
+    // redirigir al checkout productivo:
+    window.location.replace(init_point); // o window.location.href = init_point
+  }
   return (
     <main>
       <section className="top-bar">
