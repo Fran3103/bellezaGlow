@@ -83,18 +83,46 @@ async function sendDownloadEmail({ to, name, payId }) {
 }
 
 /** ---------- Google Sheets (Apps Script) ---------- */
-async function postToSheet(payload) {
-  if (!SHEET_WEBHOOK_URL) return; // si no configuraste, no hacemos nada
+async function postToSheet(pay) {
+  if (!SHEET_WEBHOOK_URL) return;
+
+  const row = {
+    payment_id: pay.id,
+    status: pay.status,
+    email:  pay.payer?.email || '',
+    name:   [pay.payer?.first_name, pay.payer?.last_name].filter(Boolean).join(' '),
+    amount: pay.transaction_amount,
+    // Fallbacks para capturar siempre algún identificador de preferencia/orden
+    preference_id: pay.metadata?.preference_id || pay.order?.id || pay.preference_id || '',
+    external_reference: pay.external_reference || '',
+    utm_source:   pay.metadata?.utm_source   || '',
+    utm_medium:   pay.metadata?.utm_medium   || '',
+    utm_campaign: pay.metadata?.utm_campaign || '',
+    utm_id:       pay.metadata?.utm_id       || '',
+    utm_term:     pay.metadata?.utm_term     || '',
+    utm_content:  pay.metadata?.utm_content  || '',
+    date_created: pay.date_created || ''
+  };
+
   try {
-    await fetch(`${SHEET_WEBHOOK_URL}?key=${encodeURIComponent(SHEET_SECRET || '')}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    const r = await fetch(
+      `${SHEET_WEBHOOK_URL}?key=${encodeURIComponent(SHEET_SECRET || '')}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(row)
+      }
+    );
+    console.log('SHEET POST status', r.status);
+    if (!r.ok) {
+      const txt = await r.text().catch(()=> '');
+      console.warn('SHEET POST non-2xx:', r.status, txt);
+    }
   } catch (e) {
     console.error('sheet post error:', e);
   }
 }
+
 
 /** ---------- webhook ---------- */
 export default async function handler(req, res) {
