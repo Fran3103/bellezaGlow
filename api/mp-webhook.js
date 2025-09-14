@@ -95,47 +95,58 @@ async function sendDownloadEmail({ to, name, payId }) {
 /** ---------- Google Sheets (Apps Script) ---------- */
 async function postToSheet(pay) {
   if (!SHEET_WEBHOOK_URL) return;
-  console.log("esto es el pay", pay);
+
+  // email con fallback
+  const email =
+    pay.payer?.email ||
+    pay.additional_info?.payer?.email ||
+    '';
+
+  // nombre con múltiples fuentes
+  const first =
+    pay.payer?.first_name ||
+    pay.additional_info?.payer?.first_name ||
+    '';
+  const last =
+    pay.payer?.last_name ||
+    pay.additional_info?.payer?.last_name ||
+    '';
+  let name = `${first} ${last}`.trim();
+
+  if (!name) {
+    // si fue con tarjeta, a veces viene el titular
+    name = pay.card?.cardholder?.name ||
+           (email ? email.split('@')[0] : '');
+  }
+
   const row = {
     payment_id: pay.id,
     status: pay.status,
-    email: pay.payer?.email || "",
-    name: [pay.payer?.first_name, pay.payer?.last_name]
-      .filter(Boolean)
-      .join(" "),
+    email,
+    name,
     amount: pay.transaction_amount,
-    // Fallbacks para capturar siempre algún identificador de preferencia/orden
-    preference_id:
-      pay.metadata?.preference_id || pay.order?.id || pay.preference_id || "",
-    external_reference: pay.external_reference || "",
-    utm_source: pay.metadata?.utm_source || "",
-    utm_medium: pay.metadata?.utm_medium || "",
-    utm_campaign: pay.metadata?.utm_campaign || "",
-    utm_id: pay.metadata?.utm_id || "",
-    utm_term: pay.metadata?.utm_term || "",
-    utm_content: pay.metadata?.utm_content || "",
-    date_created: pay.date_created || "",
+    preference_id: pay.preference_id || '',
+    external_reference: pay.external_reference || '',
+    // si guardaste UTM en metadata al crear la preferencia:
+    utm_source:   pay.metadata?.utm_source   || '',
+    utm_medium:   pay.metadata?.utm_medium   || '',
+    utm_campaign: pay.metadata?.utm_campaign || '',
+    utm_id:       pay.metadata?.utm_id       || '',
+    utm_term:     pay.metadata?.utm_term     || '',
+    utm_content:  pay.metadata?.utm_content  || '',
   };
 
   try {
-    const r = await fetch(
-      `${SHEET_WEBHOOK_URL}?key=${encodeURIComponent(SHEET_SECRET || "")}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(row),
-      }
-    );
-    console.log("SHEET POST status", r.status);
-    if (!r.ok) {
-      const txt = await r.text().catch(() => "");
-      console.warn("SHEET POST non-2xx:", r.status, txt);
-    }
+    const r = await fetch(`${SHEET_WEBHOOK_URL}?key=${encodeURIComponent(SHEET_SECRET || '')}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(row)
+    });
+    if (!r.ok) console.error('sheet post non-2xx:', r.status, await r.text());
   } catch (e) {
-    console.error("sheet post error:", e);
+    console.error('sheet post error:', e);
   }
 }
-
 /** ---------- webhook ---------- */
 export default async function handler(req, res) {
   // MP reintenta si no respondés 200. Si algo falla, logueamos pero devolvemos 200.
