@@ -85,7 +85,7 @@ async function sendDownloadEmail({ to, name, payId }) {
 /** ---------- Google Sheets (Apps Script) ---------- */
 async function postToSheet(pay) {
   if (!SHEET_WEBHOOK_URL) return;
-
+console.log("esto es el pay",pay)
   const row = {
     payment_id: pay.id,
     status: pay.status,
