@@ -81,4 +81,6 @@ Configurar en Vercel (Project Settings → Environment Variables):
 - `EBOOK1_URL` (`/api/go.js` para redirección)
 
   
-![Preview](public/preview.png)
+![Preview](public/preview1.png)
+![Preview](public/preview2.png)
+![Preview](public/preview3.png)
