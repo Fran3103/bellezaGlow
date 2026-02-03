@@ -18,9 +18,7 @@ export default async function handler(req, res) {
 
   // Mapa de enlaces *whitelist* (no pasar URL directa por query)
   const MAP = Object.freeze({
-    ebook1: 'https://drive.google.com/drive/folders/1Npip-OhScjdhNU56iSvTfX6sfUgbVZys?usp=drive_link',
-    // ebook2: 'https://drive.google.com/…',
-    // ebook3: 'https://…',
+    ebook1: process.env.EBOOK1_URL
   });
 
   const url = MAP[key];
