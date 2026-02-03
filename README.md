@@ -1,12 +1,53 @@
-# React + Vite
+# BellezaGlow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Landing page de venta para un **curso de cremas artesanales**, optimizada para conversión (CTA, secciones de valor, responsive) y desplegada en producción.
 
-Currently, two official plugins are available:
+**Sitio en producción:** bellezaglow.com
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## ✨ Qué resuelve
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Presenta la oferta del curso de forma clara (beneficios, contenido, testimonios, preguntas frecuentes).
+- Incluye CTA de compra y flujo de pago (Mercado Pago).
+- Diseño responsive y performance-oriented (carga rápida + estructura simple).
+
+---
+
+## 🧰 Stack
+
+- **Frontend:** React + Vite (SPA)
+- **Estilos:** Tailwind 
+- **Deploy:** Vercel
+- **Pagos:** Mercado Pago ( Checkout )
+
+> Nota: El repo incluye una carpeta `/api` para endpoints (por ejemplo, integraciones o utilidades serverless en Vercel).
+
+---
+
+## 📁 Estructura del proyecto
+
+- `src/` → componentes, páginas y lógica principal
+- `public/` → assets estáticos
+- `data/` → contenido/constantes (textos, secciones, etc.)
+- `api/` → endpoints serverless (Vercel)
+- `vercel.json` → configuración de deploy / rewrites
+- `vite.config.js` → configuración de Vite
+
+---
+
+## ⚙️ Requisitos
+
+- Node.js **18+** (recomendado)
+
+---
+
+## ▶️ Cómo correrlo local
+
+```bash
+npm install
+npm run dev
+
+
+## 🚀 Deploy
+- vercel
