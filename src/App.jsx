@@ -19,6 +19,7 @@ export default function App() {
       body: JSON.stringify({}), // sin utm
     });
 
+    
     const { init_point, error } = await r.json();
 
     if (error || !init_point) {
