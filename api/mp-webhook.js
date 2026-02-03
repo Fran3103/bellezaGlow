@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* global Buffer */
 
 /** ---------- helpers ---------- */
 async function readJson(req) {
@@ -36,9 +37,6 @@ const DOWNLOADS = (process.env.DOWNLOAD_URLS || "")
     };
   });
 
-const SHEET_WEBHOOK_URL = process.env.SHEET_WEBHOOK_URL; // URL del Web App de Apps Script
-const SHEET_SECRET = process.env.SHEET_SECRET; // Debe coincidir con tu doPost en Apps Script
-
 /** ---------- email (Resend) ---------- */
 async function sendDownloadEmail({ to, name, payId }) {
   if (!RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
@@ -61,7 +59,7 @@ async function sendDownloadEmail({ to, name, payId }) {
   <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6">
     <h2>¡Gracias por tu compra${name ? ", " + name : ""}! ✨</h2>
     <p>Tu guía <b>Belleza Glow</b> está lista. Guardá estos enlaces:</p>
-    <ul>${links}</ul>
+    ${links}
     <p>¿Problemas con el acceso? Escribinos a ${
       SUPPORT_EMAIL
         ? `<a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>`
@@ -92,61 +90,6 @@ async function sendDownloadEmail({ to, name, payId }) {
   }
 }
 
-/** ---------- Google Sheets (Apps Script) ---------- */
-async function postToSheet(pay) {
-  if (!SHEET_WEBHOOK_URL) return;
-
-  // email con fallback
-  const email =
-    pay.payer?.email ||
-    pay.additional_info?.payer?.email ||
-    '';
-
-  // nombre con múltiples fuentes
-  const first =
-    pay.payer?.first_name ||
-    pay.additional_info?.payer?.first_name ||
-    '';
-  const last =
-    pay.payer?.last_name ||
-    pay.additional_info?.payer?.last_name ||
-    '';
-  let name = `${first} ${last}`.trim();
-
-  if (!name) {
-    // si fue con tarjeta, a veces viene el titular
-    name = pay.card?.cardholder?.name ||
-           (email ? email.split('@')[0] : '');
-  }
-
-  const row = {
-    payment_id: pay.id,
-    status: pay.status,
-    email,
-    name,
-    amount: pay.transaction_amount,
-    preference_id: pay.preference_id || '',
-    external_reference: pay.external_reference || '',
-    // si guardaste UTM en metadata al crear la preferencia:
-    utm_source:   pay.metadata?.utm_source   || '',
-    utm_medium:   pay.metadata?.utm_medium   || '',
-    utm_campaign: pay.metadata?.utm_campaign || '',
-    utm_id:       pay.metadata?.utm_id       || '',
-    utm_term:     pay.metadata?.utm_term     || '',
-    utm_content:  pay.metadata?.utm_content  || '',
-  };
-
-  try {
-    const r = await fetch(`${SHEET_WEBHOOK_URL}?key=${encodeURIComponent(SHEET_SECRET || '')}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(row)
-    });
-    if (!r.ok) console.error('sheet post non-2xx:', r.status, await r.text());
-  } catch (e) {
-    console.error('sheet post error:', e);
-  }
-}
 /** ---------- webhook ---------- */
 export default async function handler(req, res) {
   // MP reintenta si no respondés 200. Si algo falla, logueamos pero devolvemos 200.
@@ -181,29 +124,23 @@ export default async function handler(req, res) {
       return res.end("ok");
     }
 
-    console.log(
-      "MP payment status:",
-      pay.status,
-      "id:",
-      pay.id,
-      "ext_ref:",
-      pay.external_reference
-    );
+    console.log("MP payment:", {
+      id: pay.id,
+      status: pay.status,
+      external_reference: pay.external_reference,
+      preference_id: pay.preference_id,
+    });
 
+    // Solo actuamos cuando el pago está aprobado
     if (pay.status === "approved") {
-      // 1) Registrar en Sheets (postToSheet espera el objeto pay original)
-      await postToSheet(pay);
-
-      // 2) Email del comprador (payer o fallback en additional_info)
+      // Email del comprador (payer o fallback en additional_info)
       const email = pay.payer?.email || pay.additional_info?.payer?.email || "";
 
-      // 3) Nombre “bonito” (o user del email si no hay nombre)
+      // Nombre “bonito” (o user del email si no hay nombre)
       const name =
-        [pay.payer?.first_name, pay.payer?.last_name]
-          .filter(Boolean)
-          .join(" ") || (email ? email.split("@")[0] : "");
+        [pay.payer?.first_name, pay.payer?.last_name].filter(Boolean).join(" ") ||
+        (email ? email.split("@")[0] : "");
 
-      // 4) Enviar email si hay dirección
       if (email) {
         try {
           await sendDownloadEmail({ to: email, name, payId: pay.id });
@@ -217,10 +154,10 @@ export default async function handler(req, res) {
     }
 
     res.statusCode = 200;
-    res.end("ok");
+    return res.end("ok");
   } catch (e) {
     console.error("Webhook error:", e);
     res.statusCode = 200;
-    res.end("ok");
+    return res.end("ok");
   }
 }
