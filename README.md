@@ -47,7 +47,38 @@ Landing page de venta para un **curso de cremas artesanales**, optimizada para c
 ```bash
 npm install
 npm run dev
+```
+
+---
+
+
+
+##  Links útiles
+```md
+**Sitio en producción:** https://bellezaglow.com  
+**Repositorio:** https://github.com/Fran3103/bellezaGlow
+```
+
+## 🔌 Endpoints (Vercel Serverless)
+
+- `POST /api/mp-preference` → crea preferencia y devuelve `init_point`
+- `POST /api/mp-webhook` → recibe notificaciones y envía email con enlaces de descarga
+- `GET /api/go?u=ebook1` → redirección segura a recursos (URL via env)
 
 
 ## 🚀 Deploy
-- vercel
+- Deploy en Vercel conectado a GitHub (auto-deploy por push).
+
+## 🔐 Variables de entorno
+
+Configurar en Vercel (Project Settings → Environment Variables):
+
+- `MP_ACCESS_TOKEN`
+- `PRICE_AR`
+- `PUBLIC_SITE_URL`
+- `RESEND_API_KEY`
+- `DOWNLOAD_URLS` (ej: `ebook1|Descargar eBook`)
+- `EBOOK1_URL` (`/api/go.js` para redirección)
+
+  
+![Preview](public/preview.png)
